@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: production
+      DATABASE_CLIENT: sqlite
+      DATABASE_FILENAME: .tmp/data.db
+      APP_KEYS: ciKey1,ciKey2
+      API_TOKEN_SALT: ci-token-salt
+      ADMIN_JWT_SECRET: ci-admin-jwt-secret
+      TRANSFER_TOKEN_SALT: ci-transfer-token-salt
+      JWT_SECRET: ci-jwt-secret
+      ENCRYPTION_KEY: ci-encryption-key
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build admin panel
+        run: npm run build

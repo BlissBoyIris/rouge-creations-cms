@@ -1,0 +1,38 @@
+{
+  "kind": "singleType",
+  "collectionName": "heroes",
+  "info": {
+    "singularName": "hero",
+    "pluralName": "heroes",
+    "displayName": "Hero",
+    "description": "Homepage hero banner"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "headline": {
+      "type": "string",
+      "required": true
+    },
+    "subheadline": {
+      "type": "text"
+    },
+    "youtubeVideoUrl": {
+      "type": "string"
+    },
+    "fallbackPosterImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.cta-button"
+    }
+  }
+}

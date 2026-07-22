@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resources",
+  "info": {
+    "singularName": "resource",
+    "pluralName": "resources",
+    "displayName": "Documents",
+    "description": "Uploadable PDFs (brochures, portfolios, rate cards) for use in CTA links"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "Brochure",
+        "Portfolio",
+        "Rate Card",
+        "Other"
+      ],
+      "default": "Other"
+    },
+    "file": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "files"
+      ],
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}

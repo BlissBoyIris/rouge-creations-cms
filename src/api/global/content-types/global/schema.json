@@ -1,0 +1,38 @@
+{
+  "kind": "singleType",
+  "collectionName": "globals",
+  "info": {
+    "singularName": "global",
+    "pluralName": "globals",
+    "displayName": "Global Settings",
+    "description": "Site-wide contact info and branding"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "siteName": {
+      "type": "string",
+      "default": "Rouge Creations"
+    },
+    "contactEmail": {
+      "type": "email",
+      "required": true
+    },
+    "contactPhone": {
+      "type": "string",
+      "required": true
+    },
+    "address": {
+      "type": "text"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

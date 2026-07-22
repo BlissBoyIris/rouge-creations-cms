@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "carousel_items",
+  "info": {
+    "singularName": "carousel-item",
+    "pluralName": "carousel-items",
+    "displayName": "Carousel Item",
+    "description": "Homepage video/image carousel"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "mediaType": {
+      "type": "enumeration",
+      "enum": [
+        "video",
+        "image"
+      ],
+      "required": true,
+      "default": "image"
+    },
+    "youtubeUrl": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "caption": {
+      "type": "string"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

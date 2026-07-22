@@ -39,6 +39,26 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
       },
     },
   },
+  // Only wire up Resend once a real API key is provided — without this guard,
+  // the provider throws at boot on a fresh clone (empty key) and crashes Strapi
+  // entirely. Without a key, Strapi falls back to its bundled sendmail provider,
+  // which boots fine and only fails (caught) when an email is actually sent.
+  ...(env('RESEND_API_KEY')
+    ? {
+        email: {
+          config: {
+            provider: 'strapi-provider-email-resend',
+            providerOptions: {
+              apiKey: env('RESEND_API_KEY'),
+            },
+            settings: {
+              defaultFrom: env('EMAIL_FROM', 'onboarding@resend.dev'),
+              defaultReplyTo: env('EMAIL_REPLY_TO', env('EMAIL_FROM', 'onboarding@resend.dev')),
+            },
+          },
+        },
+      }
+    : {}),
 });
 
 export default config;

@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "event_inquiries",
+  "info": {
+    "singularName": "event-inquiry",
+    "pluralName": "event-inquiries",
+    "displayName": "Event Inquiry",
+    "description": "Lead submissions from the website contact form"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "phone": {
+      "type": "string"
+    },
+    "eventType": {
+      "type": "enumeration",
+      "enum": [
+        "Wedding",
+        "Corporate",
+        "Concert",
+        "Conference",
+        "Exhibition",
+        "Other"
+      ],
+      "default": "Other"
+    },
+    "eventDate": {
+      "type": "date"
+    },
+    "message": {
+      "type": "text",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "new",
+        "contacted",
+        "closed"
+      ],
+      "default": "new"
+    }
+  }
+}

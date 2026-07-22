@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "gallery_items",
+  "info": {
+    "singularName": "gallery-item",
+    "pluralName": "gallery-items",
+    "displayName": "Gallery Item"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "Wedding",
+        "Corporate",
+        "Concert",
+        "Conference",
+        "Exhibition"
+      ],
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ],
+      "required": true
+    },
+    "media": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "videos"
+      ]
+    }
+  }
+}

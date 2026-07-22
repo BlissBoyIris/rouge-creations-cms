@@ -1,0 +1,36 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_stats",
+  "info": {
+    "singularName": "site-stat",
+    "pluralName": "site-stats",
+    "displayName": "Site Stats",
+    "description": "Homepage event metrics counters"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "weddingsCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "corporateEventsCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "concertsCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "conferencesCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "exhibitionsCount": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

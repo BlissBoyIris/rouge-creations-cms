@@ -1,10 +1,18 @@
 import type { Core } from '@strapi/strapi';
 
-const config: Core.Config.Middlewares = [
+export default ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Middlewares => [
   'strapi::logger',
   'strapi::errors',
   'strapi::security',
-  'strapi::cors',
+  {
+    name: 'strapi::cors',
+    config: {
+      origin: env.array('FRONTEND_URLS', [
+        'http://localhost:3000',
+        'https://rouge-creations-website.vercel.app',
+      ]),
+    },
+  },
   'strapi::poweredBy',
   'strapi::query',
   'strapi::body',
@@ -12,5 +20,3 @@ const config: Core.Config.Middlewares = [
   'strapi::favicon',
   'strapi::public',
 ];
-
-export default config;
