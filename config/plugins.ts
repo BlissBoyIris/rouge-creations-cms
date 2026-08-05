@@ -37,6 +37,38 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
         allowedTypes: allowedMediaTypes,
         deniedTypes: deniedExecutableTypes,
       },
+      // Only wire up B2 once real credentials are provided — same guard
+      // pattern as the Resend email provider below, so a fresh clone still
+      // boots (falling back to local disk storage) without B2 env vars set.
+      ...(env('B2_BUCKET')
+        ? {
+            provider: 'aws-s3',
+            providerOptions: {
+              s3Options: {
+                credentials: {
+                  accessKeyId: env('B2_ACCESS_KEY_ID'),
+                  secretAccessKey: env('B2_SECRET_ACCESS_KEY'),
+                },
+                endpoint: env('B2_ENDPOINT'),
+                region: env('B2_REGION', 'us-west-004'),
+                forcePathStyle: true,
+                params: {
+                  // Bucket is Private (B2 charges $1 to verify card-on-file
+                  // for Public buckets) — ACL: private makes the provider
+                  // sign GET URLs instead, so media still loads.
+                  ACL: 'private',
+                  signedUrlExpires: env('B2_SIGNED_URL_EXPIRES', 60 * 60 * 24 * 7),
+                  Bucket: env('B2_BUCKET'),
+                },
+              },
+            },
+            actionOptions: {
+              upload: {},
+              uploadStream: {},
+              delete: {},
+            },
+          }
+        : {}),
     },
   },
   // Only wire up Resend once a real API key is provided — without this guard,
