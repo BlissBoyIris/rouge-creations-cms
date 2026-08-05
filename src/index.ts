@@ -9,6 +9,7 @@ const PUBLIC_READ_CONTENT_TYPES = [
   'client',
   'site-stat',
   'gallery-item',
+  'expertise',
   'blog-post',
   'resource',
   'global',

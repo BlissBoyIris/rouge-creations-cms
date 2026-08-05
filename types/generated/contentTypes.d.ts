@@ -468,47 +468,12 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     publishedDate: Schema.Attribute.Date;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-  };
-}
-
-export interface ApiCarouselItemCarouselItem
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'carousel_items';
-  info: {
-    description: 'Homepage video/image carousel';
-    displayName: 'Carousel Item';
-    pluralName: 'carousel-items';
-    singularName: 'carousel-item';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    caption: Schema.Attribute.String;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    image: Schema.Attribute.Media<'images'>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::carousel-item.carousel-item'
-    > &
-      Schema.Attribute.Private;
-    mediaType: Schema.Attribute.Enumeration<['video', 'image']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'image'>;
-    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    youtubeUrl: Schema.Attribute.String;
   };
 }
 
@@ -583,6 +548,41 @@ export interface ApiEventInquiryEventInquiry
   };
 }
 
+export interface ApiExpertiseExpertise extends Struct.CollectionTypeSchema {
+  collectionName: 'expertises';
+  info: {
+    displayName: 'Expertise';
+    pluralName: 'expertises';
+    singularName: 'expertise';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    blurb: Schema.Attribute.Text & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    detail: Schema.Attribute.RichText;
+    excludes: Schema.Attribute.Text;
+    image: Schema.Attribute.Media<'images'>;
+    includes: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::expertise.expertise'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiGalleryItemGalleryItem extends Struct.CollectionTypeSchema {
   collectionName: 'gallery_items';
   info: {
@@ -598,11 +598,14 @@ export interface ApiGalleryItemGalleryItem extends Struct.CollectionTypeSchema {
       ['Wedding', 'Corporate', 'Concert', 'Conference', 'Exhibition']
     > &
       Schema.Attribute.Required;
+    client: Schema.Attribute.String;
     coverImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
+    eventName: Schema.Attribute.String;
+    isFeatured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -615,6 +618,7 @@ export interface ApiGalleryItemGalleryItem extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    year: Schema.Attribute.Integer;
   };
 }
 
@@ -643,7 +647,9 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
     > &
       Schema.Attribute.Private;
     logo: Schema.Attribute.Media<'images'>;
+    logoDark: Schema.Attribute.Media<'images'>;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     siteName: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Rouge Creations'>;
     updatedAt: Schema.Attribute.DateTime;
@@ -674,11 +680,11 @@ export interface ApiHeroHero extends Struct.SingleTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::hero.hero'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    stills: Schema.Attribute.Media<'images', true>;
     subheadline: Schema.Attribute.Text;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    youtubeVideoUrl: Schema.Attribute.String;
   };
 }
 
@@ -793,6 +799,7 @@ export interface ApiTestimonialTestimonial extends Struct.CollectionTypeSchema {
   attributes: {
     avatar: Schema.Attribute.Media<'images'>;
     clientName: Schema.Attribute.String & Schema.Attribute.Required;
+    company: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -802,6 +809,8 @@ export interface ApiTestimonialTestimonial extends Struct.CollectionTypeSchema {
       'api::testimonial.testimonial'
     > &
       Schema.Attribute.Private;
+    order: Schema.Attribute.Integer;
+    photos: Schema.Attribute.Media<'images', true>;
     publishedAt: Schema.Attribute.DateTime;
     quote: Schema.Attribute.Text & Schema.Attribute.Required;
     rating: Schema.Attribute.Integer &
@@ -813,6 +822,8 @@ export interface ApiTestimonialTestimonial extends Struct.CollectionTypeSchema {
         number
       >;
     role: Schema.Attribute.String;
+    source: Schema.Attribute.Enumeration<['google', 'direct']> &
+      Schema.Attribute.DefaultTo<'direct'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1331,9 +1342,9 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
-      'api::carousel-item.carousel-item': ApiCarouselItemCarouselItem;
       'api::client.client': ApiClientClient;
       'api::event-inquiry.event-inquiry': ApiEventInquiryEventInquiry;
+      'api::expertise.expertise': ApiExpertiseExpertise;
       'api::gallery-item.gallery-item': ApiGalleryItemGalleryItem;
       'api::global.global': ApiGlobalGlobal;
       'api::hero.hero': ApiHeroHero;

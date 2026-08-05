@@ -44,6 +44,19 @@
         "images",
         "videos"
       ]
+    },
+    "eventName": {
+      "type": "string"
+    },
+    "client": {
+      "type": "string"
+    },
+    "year": {
+      "type": "integer"
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

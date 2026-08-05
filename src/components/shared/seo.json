@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_shared_seos",
+  "info": {
+    "displayName": "SEO",
+    "icon": "search",
+    "description": "Search-engine and social-share overrides. Every field is optional — leave blank to use the page's own content."
+  },
+  "options": {},
+  "attributes": {
+    "metaTitle": {
+      "type": "string",
+      "maxLength": 60,
+      "description": "Overrides the browser/search title. Aim for 50-60 characters."
+    },
+    "metaDescription": {
+      "type": "text",
+      "maxLength": 160,
+      "description": "Overrides the search snippet. Aim for 140-160 characters."
+    },
+    "ogImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Social share image. 1200x630. Falls back to the auto-generated card."
+    },
+    "canonicalURL": {
+      "type": "string",
+      "description": "Only set this when the same content lives at another URL that should rank instead."
+    },
+    "noIndex": {
+      "type": "boolean",
+      "default": false,
+      "description": "Hide this page from search engines."
+    }
+  }
+}

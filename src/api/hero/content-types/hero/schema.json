@@ -19,8 +19,12 @@
     "subheadline": {
       "type": "text"
     },
-    "youtubeVideoUrl": {
-      "type": "string"
+    "stills": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images"
+      ]
     },
     "fallbackPosterImage": {
       "type": "media",

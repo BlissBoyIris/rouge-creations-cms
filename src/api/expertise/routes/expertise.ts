@@ -1,0 +1,3 @@
+import { factories } from '@strapi/strapi';
+
+export default factories.createCoreRouter('api::expertise.expertise' as any);
