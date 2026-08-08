@@ -1,5 +1,10 @@
 import type { Core } from '@strapi/strapi';
 
+/**
+ * Development middleware stack. Strapi Cloud overwrites this file on every
+ * deploy, so production changes belong in `config/env/production/middlewares.ts`
+ * and have to be made in both places.
+ */
 export default ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Middlewares => [
   'strapi::logger',
   'strapi::errors',
