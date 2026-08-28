@@ -20,9 +20,12 @@
       "enum": [
         "Wedding",
         "Corporate",
-        "Concert",
         "Conference",
-        "Exhibition"
+        "Exhibition",
+        "Decor",
+        "Entertainment",
+        "Activation",
+        "Opening"
       ],
       "required": true
     },
