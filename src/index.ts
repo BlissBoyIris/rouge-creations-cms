@@ -219,23 +219,22 @@ const GALLERY_ITEM_UID = 'api::gallery-item.gallery-item';
 const GALLERY_ITEM_TABLE = 'gallery_items';
 
 /**
- * Sends one gallery item to the front and pushes every other item back by one, in a
- * single pass: `order = order + 1` for everything else, then `order = 1` for this one.
- * Raw knex rather than the query layer's `update`, since Strapi's `data.order = data.order
- * + 1` isn't expressible through it — this needs the increment to happen in the
- * database, not read-then-write per row, or two edits landing at once could clobber
- * each other.
+ * Sends one gallery item to the front and pushes every other item back by one:
+ * `order = order + 1` for everything else, then `order = 1` for this one. Raw knex
+ * rather than the query layer's `update`, since Strapi's `data.order = data.order + 1`
+ * isn't expressible through it.
+ *
+ * Deliberately not wrapped in its own transaction. The Document Service's own
+ * create/update for this same row is a transaction that may still be open on Postgres
+ * (production) at the moment this runs — SQLite, used locally, doesn't lock the same
+ * way and let an earlier version of this pass its local test despite the bug. Opening
+ * a second transaction against a row an open outer one already holds a lock on waits
+ * on that lock, and every save through the admin hung until it timed out. Two
+ * independent, auto-committing statements never compete for that lock.
  */
 async function sendGalleryItemToFront(strapi: Core.Strapi, itemId: number) {
-  const trx = await strapi.db.connection.transaction();
-  try {
-    await trx(GALLERY_ITEM_TABLE).where('id', '!=', itemId).increment('order', 1);
-    await trx(GALLERY_ITEM_TABLE).where('id', itemId).update({ order: 1 });
-    await trx.commit();
-  } catch (error) {
-    await trx.rollback();
-    throw error;
-  }
+  await strapi.db.connection(GALLERY_ITEM_TABLE).where('id', '!=', itemId).increment('order', 1);
+  await strapi.db.connection(GALLERY_ITEM_TABLE).where('id', itemId).update({ order: 1 });
 }
 
 /** Loosely zero: catches `0`, `"0"`, and (for create) an omitted field entirely. */
@@ -271,7 +270,19 @@ function registerGalleryOrderLifecycle(strapi: Core.Strapi) {
     const result = await next();
 
     const id = (result as { id?: number } | null)?.id;
-    if (isFront && id) await sendGalleryItemToFront(strapi, id);
+    if (isFront && id) {
+      // Deferred to the next tick, after this save's own transaction has committed —
+      // see the note on sendGalleryItemToFront. Caught and logged rather than thrown:
+      // the photo is already saved by this point, and a bug in the reorder step must
+      // never look like the save itself failing.
+      setImmediate(() => {
+        sendGalleryItemToFront(strapi, id).catch((error) => {
+          strapi.log.error(
+            `[gallery-order] failed to send gallery item ${id} to front: ${(error as Error).message}`,
+          );
+        });
+      });
+    }
 
     return result;
   });
