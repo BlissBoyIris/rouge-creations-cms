@@ -215,6 +215,55 @@ async function recoverGalleryItemCategories(strapi: Core.Strapi) {
   }
 }
 
+const GALLERY_ITEM_UID = 'api::gallery-item.gallery-item';
+const GALLERY_ITEM_TABLE = 'gallery_items';
+
+/**
+ * Sends one gallery item to the front and pushes every other item back by one, in a
+ * single pass: `order = order + 1` for everything else, then `order = 1` for this one.
+ * Raw knex rather than the query layer's `update`, since Strapi's `data.order = data.order
+ * + 1` isn't expressible through it — this needs the increment to happen in the
+ * database, not read-then-write per row, or two edits landing at once could clobber
+ * each other.
+ */
+async function sendGalleryItemToFront(strapi: Core.Strapi, itemId: number) {
+  const trx = await strapi.db.connection.transaction();
+  try {
+    await trx(GALLERY_ITEM_TABLE).where('id', '!=', itemId).increment('order', 1);
+    await trx(GALLERY_ITEM_TABLE).where('id', itemId).update({ order: 1 });
+    await trx.commit();
+  } catch (error) {
+    await trx.rollback();
+    throw error;
+  }
+}
+
+/**
+ * With a hundred-plus gallery photos, renumbering every existing item by hand each time
+ * a new one is added is not something an editor should have to do. So: leave a photo's
+ * Order at its default (0, or simply don't touch the field) when uploading, and it
+ * automatically becomes 1 — everything else shifts back by one, same as a card pushed
+ * to the top of a stack. Resetting an existing photo's Order to 0 does the same thing,
+ * as a "send to the front" shortcut. An Order set to anything else, on create or edit,
+ * is left alone: that is a deliberate, specific placement.
+ */
+function registerGalleryOrderLifecycle(strapi: Core.Strapi) {
+  strapi.db.lifecycles.subscribe({
+    models: [GALLERY_ITEM_UID],
+    async afterCreate(event) {
+      const submittedOrder = event.params?.data?.order;
+      if (submittedOrder !== undefined && submittedOrder !== 0) return;
+      const newId = event.result?.id;
+      if (newId) await sendGalleryItemToFront(strapi, newId);
+    },
+    async afterUpdate(event) {
+      if (event.params?.data?.order !== 0) return;
+      const id = event.result?.id;
+      if (id) await sendGalleryItemToFront(strapi, id);
+    },
+  });
+}
+
 export default {
   register(/* { strapi }: { strapi: Core.Strapi } */) {},
 
@@ -227,5 +276,6 @@ export default {
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     await grantPublicPermissions(strapi);
     await recoverGalleryItemCategories(strapi);
+    registerGalleryOrderLifecycle(strapi);
   },
 };
