@@ -238,6 +238,12 @@ async function sendGalleryItemToFront(strapi: Core.Strapi, itemId: number) {
   }
 }
 
+/** Loosely zero: catches `0`, `"0"`, and (for create) an omitted field entirely. */
+function isFrontSignal(value: unknown, treatMissingAsFront: boolean): boolean {
+  if (value === undefined || value === null) return treatMissingAsFront;
+  return Number(value) === 0;
+}
+
 /**
  * With a hundred-plus gallery photos, renumbering every existing item by hand each time
  * a new one is added is not something an editor should have to do. So: leave a photo's
@@ -246,21 +252,28 @@ async function sendGalleryItemToFront(strapi: Core.Strapi, itemId: number) {
  * to the top of a stack. Resetting an existing photo's Order to 0 does the same thing,
  * as a "send to the front" shortcut. An Order set to anything else, on create or edit,
  * is left alone: that is a deliberate, specific placement.
+ *
+ * Strapi v5's admin Content Manager, REST API, and GraphQL all write through the
+ * Document Service, not the raw query engine — `strapi.db.lifecycles` sits one layer
+ * too low and never sees these writes, which is why an initial version of this hook
+ * (subscribed there) silently did nothing from the admin panel. `strapi.documents.use`
+ * is the middleware layer Strapi v5 actually routes every document write through.
  */
 function registerGalleryOrderLifecycle(strapi: Core.Strapi) {
-  strapi.db.lifecycles.subscribe({
-    models: [GALLERY_ITEM_UID],
-    async afterCreate(event) {
-      const submittedOrder = event.params?.data?.order;
-      if (submittedOrder !== undefined && submittedOrder !== 0) return;
-      const newId = event.result?.id;
-      if (newId) await sendGalleryItemToFront(strapi, newId);
-    },
-    async afterUpdate(event) {
-      if (event.params?.data?.order !== 0) return;
-      const id = event.result?.id;
-      if (id) await sendGalleryItemToFront(strapi, id);
-    },
+  strapi.documents.use(async (context, next) => {
+    if (context.uid !== GALLERY_ITEM_UID || !['create', 'update'].includes(context.action)) {
+      return next();
+    }
+
+    const submittedOrder = (context.params as { data?: { order?: unknown } })?.data?.order;
+    const isFront = isFrontSignal(submittedOrder, context.action === 'create');
+
+    const result = await next();
+
+    const id = (result as { id?: number } | null)?.id;
+    if (isFront && id) await sendGalleryItemToFront(strapi, id);
+
+    return result;
   });
 }
 
