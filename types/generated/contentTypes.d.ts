@@ -630,19 +630,7 @@ export interface ApiGalleryItemGalleryItem extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    category: Schema.Attribute.Enumeration<
-      [
-        'Wedding',
-        'Corporate',
-        'Conference',
-        'Exhibition',
-        'Decor',
-        'Artists',
-        'Activation',
-      ]
-    > &
-      Schema.Attribute.Required;
-    categoryRef: Schema.Attribute.Relation<
+    category: Schema.Attribute.Relation<
       'manyToOne',
       'api::gallery-category.gallery-category'
     >;
@@ -653,7 +641,6 @@ export interface ApiGalleryItemGalleryItem extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
     eventName: Schema.Attribute.String;
-    isFeatured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',

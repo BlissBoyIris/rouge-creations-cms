@@ -43,10 +43,6 @@
     "year": {
       "type": "integer"
     },
-    "isFeatured": {
-      "type": "boolean",
-      "default": false
-    },
     "order": {
       "type": "integer",
       "default": 0
