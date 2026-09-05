@@ -40,5 +40,14 @@
   "strapi": {
     "uuid": "10bcab37-7ae8-40ec-8050-f1de44aea7b6",
     "installId": "492e21a35698632bdb9a598e6647290c2c0bc021789bd9d7c1ed09d46f59a265"
+  },
+  "allowScripts": {
+    "@swc/core@1.15.46": true,
+    "better-sqlite3@12.8.0": true,
+    "core-js-pure@3.49.0": true,
+    "esbuild@0.28.1": true,
+    "esbuild@0.21.5": true,
+    "fsevents@2.3.3": true,
+    "sharp@0.34.5": true
   }
 }
