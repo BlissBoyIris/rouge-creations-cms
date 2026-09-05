@@ -59,6 +59,16 @@
     "isFeatured": {
       "type": "boolean",
       "default": false
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "categoryRef": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::gallery-category.gallery-category",
+      "inversedBy": "galleryItems"
     }
   }
 }

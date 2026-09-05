@@ -583,6 +583,42 @@ export interface ApiExpertiseExpertise extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiGalleryCategoryGalleryCategory
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'gallery_categories';
+  info: {
+    displayName: 'Gallery Category';
+    pluralName: 'gallery-categories';
+    singularName: 'gallery-category';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    galleryItems: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::gallery-item.gallery-item'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::gallery-category.gallery-category'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiGalleryItemGalleryItem extends Struct.CollectionTypeSchema {
   collectionName: 'gallery_items';
   info: {
@@ -595,9 +631,21 @@ export interface ApiGalleryItemGalleryItem extends Struct.CollectionTypeSchema {
   };
   attributes: {
     category: Schema.Attribute.Enumeration<
-      ['Wedding', 'Corporate', 'Concert', 'Conference', 'Exhibition']
+      [
+        'Wedding',
+        'Corporate',
+        'Conference',
+        'Exhibition',
+        'Decor',
+        'Artists',
+        'Activation',
+      ]
     > &
       Schema.Attribute.Required;
+    categoryRef: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::gallery-category.gallery-category'
+    >;
     client: Schema.Attribute.String;
     coverImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
@@ -613,6 +661,7 @@ export interface ApiGalleryItemGalleryItem extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     media: Schema.Attribute.Media<'images' | 'videos'>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -1345,6 +1394,7 @@ declare module '@strapi/strapi' {
       'api::client.client': ApiClientClient;
       'api::event-inquiry.event-inquiry': ApiEventInquiryEventInquiry;
       'api::expertise.expertise': ApiExpertiseExpertise;
+      'api::gallery-category.gallery-category': ApiGalleryCategoryGalleryCategory;
       'api::gallery-item.gallery-item': ApiGalleryItemGalleryItem;
       'api::global.global': ApiGlobalGlobal;
       'api::hero.hero': ApiHeroHero;
